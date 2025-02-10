@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="../static/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <title>PDF Metadata Editor</title>
+
+    <script>
+        flatpickr("#creation_date", {
+            enableTime: true,               
+            dateFormat: "Y-m-d h:i K",      
+            noCalendar: false,              
+            disableMobile: true,            
+            time_24hr: false,              
+            allowInput: true              
+        });
+    </script>
+
+</head>
+<body>
+
+    <h2>Change Metadata</h2>
+    
+    <form id="pdfForm">
+        <input type="file" name="file" id="fileInput" accept="application/pdf" required>
+        <br><br>
+        
+        <label>Title:</label>
+        <input type="text" name="title" placeholder="Enter Title">
+        <br><br>
+
+        <label>Author:</label>
+        <input type="text" name="author" placeholder="Enter Author">
+        <br><br>
+
+        <label>Creator:</label>
+        <input type="text" name="creator" placeholder="Enter Creator">
+        <br><br>
+
+        <label>Producer:</label>
+        <input type="text" name="producer" placeholder="Enter Producer">
+        <br><br>
+
+        <label>Creation Date:</label>
+        <input type="text" id="creation_date" name="creation_date" value="2025-02-10 11:02:28 AM" /> <br>
+
+        
+        <label>Output PDF Name:</label>
+        <input type="text" id="outputName" placeholder="Enter output filename (without .pdf)" required>
+        <br><br>
+
+        <button type="submit">Upload & Process</button>
+        <console class="log"></console>
+    </form>
+
+    <div id="popup" class="popup">
+        <p>Your PDF is ready for download!</p>
+        <a id="downloadLink" href="#" download>
+            <button style="background-color: rgb(43, 255, 0);">Download PDF</button>
+        </a>
+        <button onclick="closePopup()" style="background-color: red;">Close</button>
+    </div>
+
+    <footer>
+        <p style="color: blue;">Owner: Shanu Sinha |
+            Email: <a href="mailto:iamshanusinha@gmail.com">gmail</a> | 
+            LinkedIn: <a href="https://www.linkedin.com/in/iamshanusinha/">linkedin</a> |
+            GitHub: <a href="https://www.github.com/iamshanusinha/" target="_blank">github</a>
+        </p>
+    </footer>
+
+    <script>
+        document.getElementById("pdfForm").onsubmit = async function(event) {
+            event.preventDefault();
+            let formData = new FormData(event.target);
+            let outputName = document.getElementById("outputName").value.trim();
+            
+            if (!outputName) {
+                alert("Please enter an output PDF filename.");
+                return;
+            }
+
+            try {
+                let response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    let blob = await response.blob();
+                    let url = URL.createObjectURL(blob);
+                    document.getElementById("downloadLink").href = url;
+                    document.getElementById("downloadLink").download = outputName + ".pdf";
+                    document.getElementById("popup").style.display = "block";
+                } else {
+                    alert("Error processing the PDF.");
+                }
+            } catch (error) {
+                alert("Error uploading file: " + error.message);
+            }
+        };
+
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+    </script>
+
+
+</body>
+</html>

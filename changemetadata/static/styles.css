@@ -32,3 +32,18 @@ footer {
 .popup button {
     margin-block-start: 10px;
 }
+
+h2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+}
+
+h2 img {
+    inline-size: 50px; 
+    block-size: 50px; 
+    border-radius: 50%;
+    object-fit: cover; 
+    border: 1px solid #ddd;
+}

@@ -2,7 +2,6 @@ import os
 import random
 import string
 from datetime import datetime
-from calendar import monthrange
 from flask import Blueprint, render_template, request, send_file, current_app, redirect, url_for, flash
 from PyPDF2 import PdfReader, PdfWriter
 from datetime import datetime
@@ -45,9 +44,26 @@ def upload_file():
         # Save the uploaded file temporarily
         file.save(input_path)
 
-         # If no 'creation_date' was provided, retain the default
-        creation_date = request.form.get('creation_date', datetime.now().strftime("D:%Y%m%d%H%M%S"))
-        print("creation date>>>>>",creation_date)
+        from datetime import datetime
+
+        # Define the expected date format
+        DATE_FORMAT = "%Y-%m-%d %I:%M:%S %p"
+
+        # Retrieve 'creation_date' and ensure consistent formatting
+        creation_date = request.form.get('creation_date')
+
+        if creation_date:
+            try:
+                # Convert existing date to a consistent format
+                creation_date = datetime.strptime(creation_date, DATE_FORMAT).strftime(DATE_FORMAT)
+            except ValueError:
+                print("Invalid date format received, using default timestamp.")
+                creation_date = datetime.now().strftime(DATE_FORMAT)
+        else:
+            # Use default formatted timestamp
+            creation_date = datetime.now().strftime(DATE_FORMAT)
+
+        print("creation date>>>>>", creation_date)
 
 
         # Extract metadata from form

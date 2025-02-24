@@ -44,7 +44,6 @@ def upload_file():
         # Save the uploaded file temporarily
         file.save(input_path)
 
-        from datetime import datetime
 
         # Define the expected date format
         DATE_FORMAT = "%Y-%m-%d %I:%M:%S %p"
